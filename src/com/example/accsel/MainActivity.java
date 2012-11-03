@@ -32,7 +32,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 		Log.v("Axel Listener", "Starting listener");
 
 		now.setToNow();
-		String TimeStampDB = now.format("YYYY-MM-DD H-I-S");
+		String TimeStampDB = now.format("%F_%H-%M-%S");
 		
 		int FileNum = dataDir.list().length + 1;
 		recNum.setText("Record # : " + FileNum);
@@ -56,7 +56,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 		}
 		sensorManager.registerListener(this,
 				sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION),
-				SensorManager.SENSOR_DELAY_GAME);
+				SensorManager.SENSOR_DELAY_FASTEST);
 	}
 
 	public void stopListen(View view) {
@@ -64,7 +64,6 @@ public class MainActivity extends Activity implements SensorEventListener {
 		sensorManager.unregisterListener(this,
 				sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION));
 		csvWriter.close();
-		//recNum.setVisibility(android.view.View.VISIBLE);
 	}
 
 	@Override
@@ -78,25 +77,12 @@ public class MainActivity extends Activity implements SensorEventListener {
 		zCoor = (TextView) findViewById(R.id.zcoor); // create Z axis object
 		recNum = (TextView) findViewById(R.id.recnum);
 
-		/*
-		 *  //
-		 * add listener. The listener will be HelloAndroid (this) class
-		 * sensorManager .registerListener(this, sensorManager
-		 * .getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION),//
-		 * TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
-		 */
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		String extStorageDirectory = Environment.getExternalStorageDirectory()
 				.getAbsolutePath() + "/axel";
 		dataDir = new File(extStorageDirectory);
 		if (!dataDir.exists())
 			dataDir.mkdir();
-		/*
-		 * More sensor speeds (taken from api docs) SENSOR_DELAY_FASTEST get
-		 * sensor data as fast as possible SENSOR_DELAY_GAME rate suitable for
-		 * games SENSOR_DELAY_NORMAL rate (default) suitable for screen
-		 * orientation changes
-		 */
 	}
 
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -114,7 +100,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 			float z = event.values[2];
 
 			try {
-				writeToLog(x, y, z);
+				writeToLog(x, y, z,event.timestamp);
 			} catch (IOException e) {
 				e.printStackTrace();
 				stopListen(null);
@@ -126,12 +112,10 @@ public class MainActivity extends Activity implements SensorEventListener {
 		}
 	}
 
-	public void writeToLog(float x, float y, float z) throws IOException {
+	public void writeToLog(float x, float y, float z,long nanos) throws IOException {
 
 		try {
-			now.setToNow();
-			csvWriter.print(x + ";" + y + ";" + z + ";" + now.toMillis(false)
-					+ "\n");
+			csvWriter.print(x + ";" + y + ";" + z + ";" + nanos	+ "\n");
 
 		} catch (Exception er) {
 			er.printStackTrace();
