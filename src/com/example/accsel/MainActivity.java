@@ -19,18 +19,26 @@ import android.widget.TextView;
 public class MainActivity extends Activity implements SensorEventListener {
 	private SensorManager sensorManager;
 
+
+
 	TextView xCoor; // declare X axis object
 	TextView yCoor; // declare Y axis object
 	TextView zCoor; // declare Z axis object
 	TextView recNum;
 	File dataDir;
 	File saveFile;
+	int state=0;
 	PrintWriter csvWriter;
 	Time now = new Time();
 
 	public void startListen(View view) {
 		Log.v("Axel Listener", "Starting listener");
-
+		if(state!=0)
+		{
+			Log.e("Start Listener","State!=0, not starting!");
+			return;
+		}
+		state=1;
 		now.setToNow();
 		String TimeStampDB = now.format("%F_%H-%M-%S");
 		
@@ -61,6 +69,12 @@ public class MainActivity extends Activity implements SensorEventListener {
 
 	public void stopListen(View view) {
 		Log.v("Axel Listener", "Stopping listener");
+		if(state!=1)
+		{
+			Log.e("Stop Listener","State!=1, not starting!");
+			return;
+		}
+		state=0;
 		sensorManager.unregisterListener(this,
 				sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION));
 		csvWriter.close();
@@ -68,8 +82,9 @@ public class MainActivity extends Activity implements SensorEventListener {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-
 		super.onCreate(savedInstanceState);
+		Log.v("Create","Creating...");
+
 		setContentView(R.layout.activity_main);
 
 		xCoor = (TextView) findViewById(R.id.xcoor); // create X axis object
