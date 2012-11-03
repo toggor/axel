@@ -30,5 +30,27 @@
 		android:layout_height="wrap_content"
 	/>
 	</TableRow>
+
+	<Button
+	    android:id="@+id/startrec"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:onClick="startListen"
+	    android:text="Start REC" />
+
+	<Button
+	    android:id="@+id/stoprec"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:onClick="stopListen"
+	    android:text="Stop REC" />
+
+	<TextView
+	    android:id="@+id/recnum"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="Current record #"
+	    android:textAppearance="?android:attr/textAppearanceLarge"
+	    android:visibility="invisible" />
 
 </TableLayout>
